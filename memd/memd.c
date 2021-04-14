@@ -225,7 +225,7 @@ ssize_t memd_proc_write(struct file *file, const char __user *buffer,
 	if (ret)
 		return ret;
 
-	prm.reg = ioremap_nocache(prm.addr, prm.mapping_size);
+	prm.reg = ioremap(prm.addr, prm.mapping_size);
 	if (!prm.reg) {
 		pr_err("  ioremap fail [%08lX]\n", prm.addr);
 		return -ENOMEM;
@@ -294,11 +294,10 @@ static int memd_proc_open(struct inode *inode, struct file *file)
 	return 0;
 }
 
-static const struct file_operations entry_proc_fops = {
-	.owner = THIS_MODULE,
-	.write = memd_proc_write,
-	.read  = memd_proc_read,
-	.open  = memd_proc_open,
+static const struct proc_ops entry_proc_fops = {
+	.proc_open  = memd_proc_open,
+	.proc_write = memd_proc_write,
+	.proc_read  = memd_proc_read,
 };
 
 static int memd_init(void)
